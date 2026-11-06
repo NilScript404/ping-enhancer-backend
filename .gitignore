@@ -1,0 +1,8 @@
+server
+Enhancer_Api
+*.exe
+*.out
+*.test
+.env
+.env.*
+tmp/
