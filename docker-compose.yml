@@ -1,5 +1,4 @@
 services:
-  # 1. PostgreSQL 18 Database
   db:
     image: postgres:18-alpine
     container_name: enhancer_db
@@ -18,7 +17,6 @@ services:
       timeout: 5s
       retries: 10
 
-  # 2. Your Go Fiber + Ent Backend
   api:
     build: .
     container_name: enhancer_api
@@ -26,13 +24,11 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # Points to "host=db" (the Postgres service name above)
       DB_CONN: "host=db port=5432 user=postgres dbname=ping_enhancer password=123 sslmode=disable"
     depends_on:
       db:
         condition: service_healthy
 
-  # 3. pgAdmin 4 Web UI
   pgadmin:
     image: dpage/pgadmin4:latest
     container_name: enhancer_pgadmin
@@ -40,10 +36,10 @@ services:
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: "False" # Skips the login screen entirely
+      PGADMIN_CONFIG_SERVER_MODE: "False"
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
     ports:
-      - "5050:80" # Maps localhost:5050 on the host to port 80 inside pgAdmin
+      - "5050:80"
     volumes:
       - ./servers.json:/pgadmin4/servers.json:ro
     depends_on:
