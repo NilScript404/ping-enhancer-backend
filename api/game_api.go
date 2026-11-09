@@ -10,8 +10,8 @@ import (
 )
 
 type GameDTO struct {
-	Name        string `json:"name"`
-	ProcessName string `json:"process_name"`
+	Name        string `json:"name" example:"Apex Legends"`
+	ProcessName string `json:"process_name" example:"r5apex.exe"`
 }
 
 func RegisterGameRoutes(app *fiber.App, client *ent.Client) {
@@ -23,7 +23,13 @@ func RegisterGameRoutes(app *fiber.App, client *ent.Client) {
 	gamesGroup.Delete("/:name", deleteGame(client))
 }
 
-// GET /api/games
+// getGames godoc
+// @Summary      Get all games
+// @Description  Retrieves a list of all supported games and their executable process names
+// @Tags         games
+// @Produce      json
+// @Success      200  {array}   GameDTO
+// @Router       /api/games [get]
 func getGames(client *ent.Client) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		rows, err := client.Games.Query().All(c.Context())
@@ -43,7 +49,15 @@ func getGames(client *ent.Client) fiber.Handler {
 	}
 }
 
-// POST /api/games
+// createGame godoc
+// @Summary      Create a new game
+// @Description  Adds a new game and its target process name to the database
+// @Tags         games
+// @Accept       json
+// @Produce      json
+// @Param        game  body      GameDTO  true  "Game payload"
+// @Success      201   {object}  GameDTO
+// @Router       /api/games [post]
 func createGame(client *ent.Client) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		var req GameDTO
@@ -68,7 +82,16 @@ func createGame(client *ent.Client) fiber.Handler {
 	}
 }
 
-// PUT /api/games/:name
+// updateGame godoc
+// @Summary      Update an existing game
+// @Description  Updates a game's name or process name by its current name
+// @Tags         games
+// @Accept       json
+// @Produce      json
+// @Param        name  path      string   true  "Current Game Name (URL encoded)"
+// @Param        game  body      GameDTO  true  "Updated game fields"
+// @Success      200   {object}  GameDTO
+// @Router       /api/games/{name} [put]
 func updateGame(client *ent.Client) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		targetName, err := url.PathUnescape(c.Params("name"))
@@ -101,7 +124,14 @@ func updateGame(client *ent.Client) fiber.Handler {
 	}
 }
 
-// DELETE /api/games/:name
+// deleteGame godoc
+// @Summary      Delete a game
+// @Description  Removes a game from the database by its name
+// @Tags         games
+// @Produce      json
+// @Param        name  path      string  true  "Game Name (URL encoded)"
+// @Success      204   "No Content"
+// @Router       /api/games/{name} [delete]
 func deleteGame(client *ent.Client) fiber.Handler {
 	return func(c fiber.Ctx) error {
 		targetName, err := url.PathUnescape(c.Params("name"))

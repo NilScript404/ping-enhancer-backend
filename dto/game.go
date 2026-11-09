@@ -1,4 +1,4 @@
-// package dto
+package dto
 
 // type GameResponse struct {
 // 	ID          int    `json:"id"`

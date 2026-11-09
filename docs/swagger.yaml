@@ -1,0 +1,142 @@
+definitions:
+  api.ConfigDTO:
+    properties:
+      bytes_total:
+        example: 53687091200
+        type: integer
+      bytes_used:
+        example: 1073741824
+        type: integer
+      id:
+        example: 1
+        type: integer
+      location:
+        example: DE
+        type: string
+      name:
+        example: Germany 01
+        type: string
+      remaining_days:
+        example: 14
+        type: integer
+      route_address:
+        example: DE.DOMAIN.IR
+        type: string
+      route_type:
+        example: relay
+        type: string
+      value:
+        example: |-
+          [Interface]
+          PrivateKey = ...
+        type: string
+    type: object
+  api.GameDTO:
+    properties:
+      name:
+        example: Apex Legends
+        type: string
+      process_name:
+        example: r5apex.exe
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /api/configs:
+    get:
+      description: Fetches available server endpoints, user traffic/expiration info,
+        and raw WireGuard configurations
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.ConfigDTO'
+            type: array
+      summary: Get WireGuard Configurations
+      tags:
+      - configs
+  /api/games:
+    get:
+      description: Retrieves a list of all supported games and their executable process
+        names
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.GameDTO'
+            type: array
+      summary: Get all games
+      tags:
+      - games
+    post:
+      consumes:
+      - application/json
+      description: Adds a new game and its target process name to the database
+      parameters:
+      - description: Game payload
+        in: body
+        name: game
+        required: true
+        schema:
+          $ref: '#/definitions/api.GameDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/api.GameDTO'
+      summary: Create a new game
+      tags:
+      - games
+  /api/games/{name}:
+    delete:
+      description: Removes a game from the database by its name
+      parameters:
+      - description: Game Name (URL encoded)
+        in: path
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+      summary: Delete a game
+      tags:
+      - games
+    put:
+      consumes:
+      - application/json
+      description: Updates a game's name or process name by its current name
+      parameters:
+      - description: Current Game Name (URL encoded)
+        in: path
+        name: name
+        required: true
+        type: string
+      - description: Updated game fields
+        in: body
+        name: game
+        required: true
+        schema:
+          $ref: '#/definitions/api.GameDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.GameDTO'
+      summary: Update an existing game
+      tags:
+      - games
+swagger: "2.0"

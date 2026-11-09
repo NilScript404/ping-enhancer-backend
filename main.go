@@ -9,6 +9,7 @@ import (
 	"Enhancer_Api/ent"
 	"Enhancer_Api/ent/migrate"
 
+	"github.com/gofiber/contrib/v3/swaggerui"
 	"github.com/gofiber/fiber/v3"
 	_ "github.com/lib/pq"
 )
@@ -36,8 +37,17 @@ func main() {
 
 	app := fiber.New()
 
+	cfg := swaggerui.Config{
+		BasePath: "/api",
+		FilePath: "./docs/swagger.json",
+		Path:     "docs",
+		Title:    "Swagger API Docs",
+	}
+	app.Use(swaggerui.New(cfg))
+
 	// Register feature routes
 	api.RegisterGameRoutes(app, client)
+	api.RegisterConfigRoutes(app)
 
 	log.Fatal(app.Listen(":3000"))
 }
